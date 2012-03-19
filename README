@@ -1,9 +1,14 @@
 Octolively modules are interactive LED surfaces by Evil Mad Science, http://evilmadscience.com/
 
-The Octolively product page is here: 
-http://evilmadscience.com/productsmenu/tinykitlist/411
 
 Octolively is an open source hardware+software project.
+
+The main branch of the firmware is for Octolively modules, whose product page is here: 
+http://evilmadscience.com/productsmenu/tinykitlist/411
+
+A separate branch is for the Interactive Game of Life kit, based on the Octolively hardware:
+http://evilmadscience.com/productsmenu/tinykitlist/477
+
 
 Octolively documentation is hosted at:
 http://wiki.evilmadscience.com/Octolively
