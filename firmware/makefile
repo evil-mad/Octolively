@@ -7,7 +7,10 @@ PROGRAMMER     = avrispmkII #	Must be updated with the type of programmer that y
 #PROGRAMMER     = usbtiny	#	Must be updated with the type of programmer that you use!
 PORT		   = usb		#	Must be updated with the location of programmer that you use!
 MCU_TARGET     = atmega164p 
+#MCU_TARGET     = atmega164a 
 AVRDUDE_TARGET = m164p
+#AVRDUDE_TARGET = m164a
+
 OPTIMIZE       = -Os
 DEFS           =
 LIBS           =
@@ -75,17 +78,30 @@ esrec: $(PRG)_eeprom.srec
 	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O binary $< $@
 
 
-ISPSPEED   = -B 5	 
+ISPSPEEDSLOW   = -B 4	
+ISPSPEEDFAST   = -B 1
+
+ISPFUSES    = avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v -e $(ISPSPEEDSLOW) -U lfuse:w:0xc2:m -U hfuse:w:0xD9:m   -U efuse:w:0xfd:m 
+ISPFLASH    = avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v $(ISPSPEEDSLOW) -U flash:w:$(PRG).hex
+
+ISPALL =	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v -e $(ISPSPEEDSLOW)  \
+	-U lfuse:w:0xC2:m \
+	-U hfuse:w:0xD9:m \
+	-U efuse:w:0xFD:m \
+    -U flash:w:$(PRG).hex	
 
 # command to program chip (invoked by running "make install")
-install: 
-	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v -e $(ISPSPEED)  \
-	 -U lfuse:w:0xE2:m \
+installslow: 
+	avrdude -p $(AVRDUDE_TARGET) -c $(PROGRAMMER) -P $(PORT) -v -e -B 5  \
+	 -U lfuse:w:0xC2:m \
 	 -U hfuse:w:0xD9:m \
-	 -U efuse:w:0xff:m \
+	 -U efuse:w:0xfd:m \
      -U flash:w:$(PRG).hex	
- 
 
+install: 
+	$(ISPALL)
+	
+	
 #8 MHz internal, JTAG off, boot section off. BOD off. No clock out.
 
 # Original (Default) fuse settings: 	

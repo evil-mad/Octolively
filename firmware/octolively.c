@@ -1,7 +1,10 @@
 /*
   Title: octolively.c
   Author: Larry Ogrodnek <ogrodnek@gmail.com>
-*/
+
+ Last changed: 7/12/2012.  Fixed an issue that can cause EEPROM to be saved incorrectly in rare circumstances.
+ (Also, update makefile with revised fuse settings, enabling BOD @ 2.7 V.)
+ */
 
 #define F_CPU 8000000L
 
@@ -328,9 +331,15 @@ void loop() {
 }
 
 void saveConfig() {
+    
+    // Disable interrupt while saving EEPROM bytes.  Added 7/12/2012, WHO.
+    uint8_t oldSREG = SREG;
+    cli(); 
+        
   eeprom_write_byte(&ProgramConfig, program);
   eeprom_write_byte(&SensitivityConfig, sensitivity);
   eeprom_write_byte(&NetworkConfig, netConfig);
+    SREG = oldSREG;
 }
 
 void flashLeds() {
